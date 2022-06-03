@@ -1,10 +1,10 @@
 import unittest
-from craps import Player, Craps, CrapsDealer
+from crapstable import Player, CrapsTable, CrapsDealer
 
 
 def create_test_objects():
     player = Player(name="Test", chips=250, id=1)
-    table = Craps()
+    table = CrapsTable()
     dealer = CrapsDealer(table)
     return player, table, dealer
 
