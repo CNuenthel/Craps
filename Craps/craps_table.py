@@ -20,6 +20,9 @@ class CrapsTable:
         self.point_holder = None
         self.point_on = False
 
+    def __repr__(self):
+        return str(self.__dict__)
+
     def roll_dice(self):
         """ Rolls two six-sided die """
         rolls = []

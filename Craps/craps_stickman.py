@@ -165,157 +165,138 @@ class CrapsStickman:
         self.payout = CrapsPayouts(table)
         self.bets = table.bets
 
-    def clean_payouts(self, payout_list: list):
-        for item in payout_list:
-            if not item:
-                payout_list.remove(item)
-        return payout_list
+    def flatten_payouts(self, *args):
+        master = [payout for inner_payout in args for payout in inner_payout if payout]
+        return master
 
     def snake_eyes(self, point_on: bool):
         """ Processes payout for a roll of Snake Eyes """
-        payouts = []
-
+        pass_payout = [None]
         if not point_on:
-            payouts.append(self.payout.pass_payout())
+            pass_payout = self.payout.pass_payout()
 
-        payouts.append(self.payout.field_payout(double_indicator=True))
-        payouts.append(self.payout.craps_payout("2"))
+        field_payout = self.payout.field_payout(double_indicator=True)
+        craps_payout = self.payout.craps_payout("2")
 
-        self.clean_payouts(payouts)
-        return payouts
+        return self.flatten_payouts(pass_payout, field_payout, craps_payout)
 
     def ace_deuce(self, point_on: bool):
         """ Processes payout for a roll of Ace Deuce """
-        payouts = []
-
+        no_pass_payout = [None]
         if not point_on:
-            payouts.append(self.payout.no_pass_payout())
+            no_pass_payout = self.payout.no_pass_payout()
 
-        payouts.append(self.payout.craps_payout("3"))
-        payouts.append(self.payout.field_payout(double_indicator=False))
+        craps_payout = self.payout.craps_payout("3")
+        field_payout = self.payout.field_payout(double_indicator=False)
 
-        self.clean_payouts(payouts)
-        return payouts
+        return self.flatten_payouts(no_pass_payout, craps_payout, field_payout)
 
     def four(self, roll: tuple, point_on: bool):
         """ Processes payout for a roll of Four """
-        payouts = []
-
+        hardway_payout = [None]
         if roll == (2, 2):
-            payouts.append(self.payout.hardway_payout("4"))
+            hardway_payout = self.payout.hardway_payout("4")
 
+        pass_payout = [None]
         if point_on:
-            payouts.append(self.payout.pass_payout())
+            pass_payout = self.payout.pass_payout()
 
-        payouts.append(self.payout.place_payout("4"))
-        payouts.append(self.payout.field_payout(double_indicator=False))
-
-        self.clean_payouts(payouts)
-        return payouts
+        return self.flatten_payouts(hardway_payout, pass_payout)
 
     def five(self, point_on: bool):
         """ Processes payout for a roll of Five """
-        payouts = []
-
+        pass_payout = [None]
         if point_on:
-            payouts.append(self.payout.pass_payout())
+            pass_payout = self.payout.pass_payout()
 
-        payouts.append(self.payout.place_payout("5"))
+        place_payout = self.payout.place_payout("5")
 
-        self.clean_payouts(payouts)
-        return payouts
+        return self.flatten_payouts(pass_payout, place_payout)
 
     def six(self, roll: tuple, point_on: bool):
         """ Processes payout for a roll of Six """
-        payouts = []
-
+        hardway_payout = [None]
         if roll == (3, 3):
-            payouts.append(self.payout.hardway_payout("6"))
+            hardway_payout = self.payout.hardway_payout("6")
+
+        pass_payout = [None]
         if point_on:
-            payouts.append(self.payout.pass_payout())
+            pass_payout = self.payout.pass_payout()
 
-        payouts.append(self.payout.place_payout("6"))
+        place_payout = self.payout.place_payout("6")
 
-        self.clean_payouts(payouts)
-        return payouts
+        return self.flatten_payouts(hardway_payout, pass_payout, place_payout)
 
     def seven(self, point_on: bool):
         """ Processes payout for a roll of Seven """
-        payouts = []
-
+        seven_payout = [None]
         if not point_on:
-            payouts.append(self.payout.pass_payout())
-            return
-        elif point_on:
-            payouts.append(self.payout.seven_payout())
+            return self.flatten_payouts(self.payout.pass_payout())
 
-        self.clean_payouts(payouts)
-        return payouts
+        elif point_on:
+            seven_payout = self.payout.seven_payout()
+
+        return self.flatten_payouts(seven_payout)
 
     def eight(self, roll: tuple, point_on: bool):
         """ Processes payout for a roll of Eight """
-        payouts = []
-
+        hardway_payout = [None]
         if roll == (4, 4):
-            payouts.append(self.payout.hardway_payout("8"))
+            hardway_payout = self.payout.hardway_payout("8")
+
+        pass_payout = [None]
         if point_on:
-            payouts.append(self.payout.pass_payout())
+            pass_payout = self.payout.pass_payout()
 
-        payouts.append(self.payout.place_payout("8"))
+        place_payout = self.payout.place_payout("8")
 
-        self.clean_payouts(payouts)
-        return payouts
+        return self.flatten_payouts(hardway_payout, pass_payout, place_payout)
 
     def nine(self, point_on: bool):
         """ Processes payout for a roll of Nine """
-        payouts = []
-
+        pass_payout = [None]
         if point_on:
-            payouts.append(self.payout.pass_payout())
+            pass_payout = self.payout.pass_payout()
 
-        payouts.append(self.payout.field_payout(double_indicator=False))
-        payouts.append(self.payout.place_payout("9"))
+        field_payout = self.payout.field_payout(double_indicator=False)
+        place_payout = self.payout.place_payout("9")
 
-        self.clean_payouts(payouts)
-        return payouts
+
+        return self.flatten_payouts(pass_payout, field_payout, place_payout)
 
     def ten(self, roll: tuple, point_on: bool):
         """ Processes payout for a roll of Ten """
-        payouts = []
-
+        hardway_payout = [None]
         if roll == (5, 5):
-            payouts.append(self.payout.hardway_payout("10"))
+            hardway_payout = self.payout.hardway_payout("10")
+
+        pass_payout = [None]
         if point_on:
-            payouts.append(self.payout.pass_payout())
+            pass_payout = self.payout.pass_payout()
 
-        payouts.append(self.payout.field_payout(double_indicator=False))
-        payouts.append(self.payout.place_payout("10"))
+        field_payout = self.payout.field_payout(double_indicator=False)
+        place_payout = self.payout.place_payout("10")
 
-        self.clean_payouts(payouts)
-        return payouts
+        return self.flatten_payouts(hardway_payout, pass_payout, field_payout, place_payout)
 
     def eleven(self, point_on: bool):
         """ Processes payout for a roll of Eleven """
-        payouts = []
-
+        pass_payout = [None]
         if not point_on:
-            payouts.append(self.payout.pass_payout())
+            pass_payout = self.payout.pass_payout()
 
-        payouts.append(self.payout.craps_payout("11"))
-        payouts.append(self.payout.field_payout(double_indicator=False))
+        craps_payout = self.payout.craps_payout("11")
+        field_payout = self.payout.field_payout(double_indicator=False)
 
-        self.clean_payouts(payouts)
-        return payouts
+        return self.flatten_payouts(pass_payout, craps_payout, field_payout)
 
     def twelve(self, point_on: bool):
         """ Processes payout for a roll of Twelve """
-        payouts = []
-
+        no_pass_payout = [None]
         if not point_on:
-            payouts.append(self.payout.no_pass_payout())
+            no_pass_payout = self.payout.no_pass_payout()
 
-        payouts.append(self.payout.field_payout(double_indicator=True))
-        payouts.append(self.payout.craps_payout("12"))
+        field_payout = self.payout.field_payout(double_indicator=True)
+        craps_payout = self.payout.craps_payout("12")
 
-        self.clean_payouts(payouts)
-        return payouts
+        return self.flatten_payouts(no_pass_payout, field_payout, craps_payout)

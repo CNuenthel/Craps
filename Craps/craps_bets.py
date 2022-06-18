@@ -79,8 +79,6 @@ class CrapsBets:
         """ Adds player bet to table for Field """
         if player.chips <= bet_value:
             return need_more_chips(player.name)
-        elif not point_on:
-            return bet_on_comeout_roll(player.name)
 
         player.chips -= bet_value
         if player.id in self.table.bets["Field"].keys():
