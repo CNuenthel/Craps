@@ -1,6 +1,8 @@
 import random
 from Craps.player import Player
 
+
+
 def need_more_chips(player_name: str):
     """ Returns a random response to a player betting more chips than they have """
     responses = [
@@ -35,6 +37,7 @@ def no_pass_bet(player_name: str):
         f"{player_name}, you cannot make that bet without a previous pass bet"
     ]
     return random.choice(responses)
+
 
 class CrapsBets:
     """ Bet controller for Craps table """

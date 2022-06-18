@@ -1,18 +1,15 @@
-from Craps.craps_table import CrapsTable
-
 
 class CrapsPayouts:
-    def __init__(self, table: CrapsTable, player_bets: dict):
+    def __init__(self, table):
         self.table = table
-        self.bets = player_bets
 
     def pass_payout(self):
         """ Pays out a winning bet on the Pass Line """
         payouts = []
 
-        for bet_id in self.bets["Pass"]:
+        for bet_id in self.table.bets["Pass"]:
             player = self.table.find_player(bet_id)
-            player_bet = self.bets["Pass"][bet_id]
+            player_bet = self.table.bets["Pass"][bet_id]
             payout = player_bet
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their No Pass wager!")
@@ -23,9 +20,9 @@ class CrapsPayouts:
         """ Pays out a winning bet on the Don't Pass Line """
         payouts = []
 
-        for bet_id in self.bets["No_Pass"]:
+        for bet_id in self.table.bets["No_Pass"]:
             player = self.table.find_player(bet_id)
-            player_bet = self.bets["No_Pass"][bet_id]
+            player_bet = self.table.bets["No_Pass"][bet_id]
             payout = player_bet
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their No Pass wager!")
@@ -41,9 +38,9 @@ class CrapsPayouts:
 
         payouts = []
 
-        for bet_id in self.bets["Field"]:
+        for bet_id in self.table.bets["Field"]:
             player = self.table.find_player(bet_id)
-            player_bet = self.bets["Field"][bet_id]
+            player_bet = self.table.bets["Field"][bet_id]
             payout = player_bet * multiplier
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their Field wager!")
@@ -63,9 +60,9 @@ class CrapsPayouts:
 
         payouts = []
 
-        for bet_id in self.bets["Odds"]:
+        for bet_id in self.table.bets["Odds"]:
             player = self.table.find_player(bet_id)
-            player_bet = self.bets["Odds"][bet_id]
+            player_bet = self.table.bets["Odds"][bet_id]
             payout = round(player_bet * multiplier, 2)
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their Buy Odds {point_num} wager!")
@@ -85,9 +82,9 @@ class CrapsPayouts:
 
         payouts = []
 
-        for bet_id in self.bets["Place"][point_num]:
+        for bet_id in self.table.bets["Place"][point_num]:
             player = self.table.find_player(bet_id)
-            player_bet = self.bets["Place"][point_num][bet_id]
+            player_bet = self.table.bets["Place"][point_num][bet_id]
             payout = round(player_bet * multiplier, 2)
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their Place {point_num} wager!")
@@ -98,9 +95,9 @@ class CrapsPayouts:
         """ Pays out a winning bet for Big 6|8 """
         payouts = []
 
-        for bet_id in self.bets["Big"]:
+        for bet_id in self.table.bets["Big"]:
             player = self.table.find_player(bet_id)
-            payout = self.bets["Big"][bet_id]
+            payout = self.table.bets["Big"][bet_id]
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their Big 6|8 wager!")
 
@@ -117,9 +114,9 @@ class CrapsPayouts:
 
         payouts = []
 
-        for bet_id in self.bets["Hardway"][hardway_num]:
+        for bet_id in self.table.bets["Hardway"][hardway_num]:
             player = self.table.find_player(bet_id)
-            player_bet = self.bets["Hardway"][hardway_num][bet_id]
+            player_bet = self.table.bets["Hardway"][hardway_num][bet_id]
             payout = player_bet * multiplier
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their Hard {hardway_num} wager!")
@@ -129,9 +126,9 @@ class CrapsPayouts:
     def seven_payout(self):
         payouts = []
 
-        for id in self.bets["No_Pass"]:
+        for id in self.table.bets["No_Pass"]:
             player = self.table.find_player(id)
-            payout = self.bets["Seven"][id] * 4
+            payout = self.table.bets["Seven"][id] * 4
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their Seven wager!")
 
@@ -147,25 +144,32 @@ class CrapsPayouts:
 
         payouts = []
 
-        for bet_id in self.bets["Craps"][craps_roll]:
+        for bet_id in self.table.bets["Craps"][craps_roll]:
             player = self.table.find_player(bet_id)
-            player_bet = self.bets["Craps"][craps_roll][bet_id]
+            player_bet = self.table.bets["Craps"][craps_roll][bet_id]
             payout = player_bet * multiplier
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their Craps wager!")
 
-        for bet_id in self.bets["Craps"]["Any"]:
+        for bet_id in self.table.bets["Craps"]["Any"]:
             player = self.table.find_player(bet_id)
-            player_bet = self.bets["Craps"]["Any"][bet_id]
+            player_bet = self.table.bets["Craps"]["Any"][bet_id]
             payout = player_bet * 7
             player.chips += payout
             payouts.append(f"{player.name} won ${payout} on their Craps wager!")
 
 
 class CrapsStickman:
-    def __init__(self, payout: CrapsPayouts, player_bets: dict):
-        self.payout = payout
-        self.bets = player_bets
+    """ Calls dice result and requests appropriate payout """
+    def __init__(self, table):
+        self.payout = CrapsPayouts(table)
+        self.bets = table.bets
+
+    def clean_payouts(self, payout_list: list):
+        for item in payout_list:
+            if not item:
+                payout_list.remove(item)
+        return payout_list
 
     def snake_eyes(self, point_on: bool):
         """ Processes payout for a roll of Snake Eyes """
@@ -177,6 +181,7 @@ class CrapsStickman:
         payouts.append(self.payout.field_payout(double_indicator=True))
         payouts.append(self.payout.craps_payout("2"))
 
+        self.clean_payouts(payouts)
         return payouts
 
     def ace_deuce(self, point_on: bool):
@@ -189,6 +194,7 @@ class CrapsStickman:
         payouts.append(self.payout.craps_payout("3"))
         payouts.append(self.payout.field_payout(double_indicator=False))
 
+        self.clean_payouts(payouts)
         return payouts
 
     def four(self, roll: tuple, point_on: bool):
@@ -204,6 +210,7 @@ class CrapsStickman:
         payouts.append(self.payout.place_payout("4"))
         payouts.append(self.payout.field_payout(double_indicator=False))
 
+        self.clean_payouts(payouts)
         return payouts
 
     def five(self, point_on: bool):
@@ -215,6 +222,7 @@ class CrapsStickman:
 
         payouts.append(self.payout.place_payout("5"))
 
+        self.clean_payouts(payouts)
         return payouts
 
     def six(self, roll: tuple, point_on: bool):
@@ -228,6 +236,7 @@ class CrapsStickman:
 
         payouts.append(self.payout.place_payout("6"))
 
+        self.clean_payouts(payouts)
         return payouts
 
     def seven(self, point_on: bool):
@@ -240,6 +249,7 @@ class CrapsStickman:
         elif point_on:
             payouts.append(self.payout.seven_payout())
 
+        self.clean_payouts(payouts)
         return payouts
 
     def eight(self, roll: tuple, point_on: bool):
@@ -253,6 +263,7 @@ class CrapsStickman:
 
         payouts.append(self.payout.place_payout("8"))
 
+        self.clean_payouts(payouts)
         return payouts
 
     def nine(self, point_on: bool):
@@ -265,6 +276,7 @@ class CrapsStickman:
         payouts.append(self.payout.field_payout(double_indicator=False))
         payouts.append(self.payout.place_payout("9"))
 
+        self.clean_payouts(payouts)
         return payouts
 
     def ten(self, roll: tuple, point_on: bool):
@@ -279,6 +291,7 @@ class CrapsStickman:
         payouts.append(self.payout.field_payout(double_indicator=False))
         payouts.append(self.payout.place_payout("10"))
 
+        self.clean_payouts(payouts)
         return payouts
 
     def eleven(self, point_on: bool):
@@ -291,6 +304,7 @@ class CrapsStickman:
         payouts.append(self.payout.craps_payout("11"))
         payouts.append(self.payout.field_payout(double_indicator=False))
 
+        self.clean_payouts(payouts)
         return payouts
 
     def twelve(self, point_on: bool):
@@ -303,4 +317,5 @@ class CrapsStickman:
         payouts.append(self.payout.field_payout(double_indicator=True))
         payouts.append(self.payout.craps_payout("12"))
 
+        self.clean_payouts(payouts)
         return payouts
