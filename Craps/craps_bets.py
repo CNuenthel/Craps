@@ -6,11 +6,11 @@ from Craps.player import Player
 def need_more_chips(player_name: str):
     """ Returns a random response to a player betting more chips than they have """
     responses = [
-        f"Hey {player_name}, you need more dosh to make that bet",
-        f"Nice try {player_name}, cash in first to make that bet",
-        f"With what chips {player_name}?",
-        f"Maybe you should win on a roll before placing chips you dont have {player_name}.",
-        f"Get some chips to put on the table first {player_name}"
+        f"Hey {player_name}, you need more dosh to make that bet"
+        # f"Nice try {player_name}, cash in first to make that bet",
+        # f"With what chips {player_name}?",
+        # f"Maybe you should win on a roll before placing chips you dont have {player_name}.",
+        # f"Get some chips to put on the table first {player_name}"
     ]
     return random.choice(responses)
 
@@ -75,7 +75,7 @@ class CrapsBets:
             self.table.bets["No_Pass"][player.id] = bet_value
             return f"{player.name} has bet ${bet_value}.00 on the No Pass Line!"
 
-    def bet_field(self, player: Player, bet_value: int, point_on: bool):
+    def bet_field(self, player: Player, bet_value: int):
         """ Adds player bet to table for Field """
         if player.chips <= bet_value:
             return need_more_chips(player.name)
@@ -97,10 +97,6 @@ class CrapsBets:
         elif player.id not in self.table.bets["Pass"].keys():
             return no_pass_bet(player.name)
 
-        player_pass_bet = self.table.bets["Pass"][player.id]
-        if bet_value not in [2 * player_pass_bet, 3 * player_pass_bet]:
-            return f"{player.name}, your Odds bet must be 2x or 3x your Pass bet!"
-
         player.chips -= bet_value
         if player.id in self.table.bets["Odds"].keys():
             self.table.bets["Odds"][player.id] += bet_value
@@ -121,7 +117,7 @@ class CrapsBets:
 
         if player.id in self.table.bets["Place"][bet_target].keys():
             self.table.bets["Place"][bet_target][player.id] += bet_value
-            return f"{player.name} pressed their Place {bet_target} bet to ${self.table.bets['Place'][player.id]}.00!"
+            return f"{player.name} pressed their Place {bet_target} bet to ${self.table.bets['Place'][bet_target][player.id]}.00!"
         else:
             self.table.bets["Place"][bet_target][player.id] = bet_value
             return f"{player.name} has made a Place bet of {bet_value}.00 on {bet_target}!"
@@ -166,7 +162,7 @@ class CrapsBets:
 
         if player.id in self.table.bets["Seven"].keys():
             self.table.bets["Seven"][player.id] += bet_value
-            return f"{player.name} pressed their Any 7 bet to ${self.table.bets['Big'][player.id]}.00!"
+            return f"{player.name} pressed their Any 7 bet to ${self.table.bets['Seven'][player.id]}.00!"
         else:
             self.table.bets["Seven"][player.id] = bet_value
             return f"{player.name} has bet ${bet_value}.00 on Any 7!"
