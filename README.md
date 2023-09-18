@@ -1,6 +1,7 @@
 # Craps
 Craps creates a group of classes that can be utilized to create a craps app. 
 
+
 ## Modules
 
 ### craps
@@ -20,6 +21,7 @@ CrapsTest is the unittest test suite for the application. CrapsTest runs bets an
 
 ### player
 Player hols the player class. Simply a player with a name, a number of chips and an ID number.
+
 
 ## Order
 To utilize this codebase there is an order of operations to follow to make sure all objects are in place. I'll break that down here.
